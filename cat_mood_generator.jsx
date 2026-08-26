@@ -1,0 +1,398 @@
+import { useState } from "react";
+
+const MOODS = [
+  {
+    id: "genki",
+    label: "上機嫌",
+    quip: "今なら人間の相手をしてやってもいい気分。",
+    color: "#ff6f91",
+    rarity: 1,
+    eyes: "happy",
+    mouth: "smile",
+    ear: 0,
+    blush: false,
+  },
+  {
+    id: "nemui",
+    label: "おねむ",
+    quip: "まぶたが1トンくらいある。話しかけないで。",
+    color: "#8c7ae6",
+    rarity: 1,
+    eyes: "sleepy",
+    mouth: "yawn",
+    ear: -6,
+    blush: false,
+  },
+  {
+    id: "tsundere",
+    label: "ツンデレ",
+    quip: "べ、別に構ってほしいわけじゃないから。",
+    color: "#ffb347",
+    rarity: 2,
+    eyes: "side",
+    mouth: "flat",
+    ear: 8,
+    blush: true,
+  },
+  {
+    id: "hara",
+    label: "お腹ペコペコ",
+    quip: "ごはんの缶を開ける音、幻聴で聞こえてる。",
+    color: "#ffd93d",
+    rarity: 1,
+    eyes: "wide",
+    mouth: "meow",
+    ear: 4,
+    blush: false,
+  },
+  {
+    id: "zekkocho",
+    label: "絶好調",
+    quip: "カーテンによじ登れる気がする。実際登る。",
+    color: "#4ecdc4",
+    rarity: 2,
+    eyes: "star",
+    mouth: "smirk",
+    ear: 10,
+    blush: false,
+  },
+  {
+    id: "dou",
+    label: "どうでもいい",
+    quip: "世界の全ての物事に0.1ミリも興味がない。",
+    color: "#9aa0a6",
+    rarity: 1,
+    eyes: "flat",
+    mouth: "flat",
+    ear: -10,
+    blush: false,
+  },
+  {
+    id: "amae",
+    label: "甘えたい",
+    quip: "ひざの上、あける準備はできてる?",
+    color: "#ff8fa3",
+    rarity: 3,
+    eyes: "heart",
+    mouth: "smile",
+    ear: 2,
+    blush: true,
+  },
+  {
+    id: "nazo",
+    label: "謎めいてる",
+    quip: "何を考えているかは永遠に秘密。",
+    color: "#5c6bc0",
+    rarity: 3,
+    eyes: "wink",
+    mouth: "smirk",
+    ear: -3,
+    blush: false,
+  },
+];
+
+function Eyes({ type }) {
+  switch (type) {
+    case "happy":
+      return (
+        <>
+          <path d="M62 92 Q72 78 82 92" stroke="#2b2438" strokeWidth="5" fill="none" strokeLinecap="round" />
+          <path d="M118 92 Q128 78 138 92" stroke="#2b2438" strokeWidth="5" fill="none" strokeLinecap="round" />
+        </>
+      );
+    case "sleepy":
+      return (
+        <>
+          <path d="M60 90 Q72 94 84 90" stroke="#2b2438" strokeWidth="5" fill="none" strokeLinecap="round" />
+          <path d="M116 90 Q128 94 140 90" stroke="#2b2438" strokeWidth="5" fill="none" strokeLinecap="round" />
+        </>
+      );
+    case "side":
+      return (
+        <>
+          <circle cx="70" cy="90" r="7" fill="#2b2438" />
+          <circle cx="126" cy="90" r="7" fill="#2b2438" />
+          <circle cx="73" cy="87" r="2" fill="#fff" />
+          <circle cx="129" cy="87" r="2" fill="#fff" />
+        </>
+      );
+    case "wide":
+      return (
+        <>
+          <circle cx="71" cy="90" r="11" fill="#2b2438" />
+          <circle cx="125" cy="90" r="11" fill="#2b2438" />
+          <circle cx="75" cy="85" r="3" fill="#fff" />
+          <circle cx="129" cy="85" r="3" fill="#fff" />
+        </>
+      );
+    case "star":
+      return (
+        <>
+          <text x="62" y="99" fontSize="22">✦</text>
+          <text x="112" y="99" fontSize="22">✦</text>
+        </>
+      );
+    case "flat":
+      return (
+        <>
+          <line x1="60" y1="90" x2="84" y2="90" stroke="#2b2438" strokeWidth="5" strokeLinecap="round" />
+          <line x1="116" y1="90" x2="140" y2="90" stroke="#2b2438" strokeWidth="5" strokeLinecap="round" />
+        </>
+      );
+    case "heart":
+      return (
+        <>
+          <text x="58" y="100" fontSize="24">💗</text>
+          <text x="112" y="100" fontSize="24">💗</text>
+        </>
+      );
+    case "wink":
+      return (
+        <>
+          <path d="M60 90 Q72 96 84 90" stroke="#2b2438" strokeWidth="5" fill="none" strokeLinecap="round" />
+          <circle cx="126" cy="90" r="7" fill="#2b2438" />
+        </>
+      );
+    default:
+      return null;
+  }
+}
+
+function Mouth({ type }) {
+  switch (type) {
+    case "smile":
+      return <path d="M88 112 Q100 122 112 112" stroke="#2b2438" strokeWidth="4" fill="none" strokeLinecap="round" />;
+    case "yawn":
+      return <ellipse cx="100" cy="116" rx="9" ry="11" fill="#a85c6b" stroke="#2b2438" strokeWidth="3" />;
+    case "meow":
+      return <ellipse cx="100" cy="114" rx="6" ry="8" fill="#a85c6b" stroke="#2b2438" strokeWidth="3" />;
+    case "flat":
+      return <line x1="90" y1="113" x2="110" y2="113" stroke="#2b2438" strokeWidth="4" strokeLinecap="round" />;
+    case "smirk":
+      return <path d="M88 111 Q100 118 114 108" stroke="#2b2438" strokeWidth="4" fill="none" strokeLinecap="round" />;
+    default:
+      return null;
+  }
+}
+
+function CatFace({ mood }) {
+  const color = mood ? mood.color : "#c9c2d9";
+  const ear = mood ? mood.ear : 0;
+  return (
+    <svg viewBox="0 0 200 170" width="220" height="187">
+      {/* whiskers */}
+      <g stroke="#2b2438" strokeWidth="2.5" strokeLinecap="round" opacity="0.55">
+        <line x1="18" y1="98" x2="55" y2="96" />
+        <line x1="18" y1="112" x2="55" y2="110" />
+        <line x1="145" y1="96" x2="182" y2="98" />
+        <line x1="145" y1="110" x2="182" y2="112" />
+      </g>
+      {/* ears */}
+      <g style={{ transform: `rotate(${ear}deg)`, transformOrigin: "100px 130px", transition: "transform 0.5s cubic-bezier(.34,1.56,.64,1)" }}>
+        <path d="M42 78 L28 28 L78 62 Z" fill="#f4ede2" stroke="#2b2438" strokeWidth="4" strokeLinejoin="round" />
+        <path d="M158 78 L172 28 L122 62 Z" fill="#f4ede2" stroke="#2b2438" strokeWidth="4" strokeLinejoin="round" />
+        <path d="M46 68 L38 38 L70 58 Z" fill={color} opacity="0.55" />
+        <path d="M154 68 L162 38 L130 58 Z" fill={color} opacity="0.55" />
+      </g>
+      {/* head */}
+      <ellipse cx="100" cy="105" rx="72" ry="62" fill="#f4ede2" stroke="#2b2438" strokeWidth="4" />
+      {/* blush */}
+      {mood?.blush && (
+        <>
+          <ellipse cx="58" cy="108" rx="10" ry="6" fill={color} opacity="0.5" />
+          <ellipse cx="142" cy="108" rx="10" ry="6" fill={color} opacity="0.5" />
+        </>
+      )}
+      {/* eyes */}
+      {mood ? <Eyes type={mood.eyes} /> : (
+        <>
+          <text x="62" y="99" fontSize="22" fill="#2b2438">?</text>
+          <text x="118" y="99" fontSize="22" fill="#2b2438">?</text>
+        </>
+      )}
+      {/* nose + mouth */}
+      <path d="M96 103 L104 103 L100 109 Z" fill="#a85c6b" />
+      <line x1="100" y1="109" x2="100" y2="112" stroke="#2b2438" strokeWidth="3" />
+      {mood && <Mouth type={mood.mouth} />}
+    </svg>
+  );
+}
+
+export default function CatMoodGenerator() {
+  const [mood, setMood] = useState(null);
+  const [drawing, setDrawing] = useState(false);
+  const [count, setCount] = useState(0);
+
+  const draw = () => {
+    if (drawing) return;
+    setDrawing(true);
+    setTimeout(() => {
+      setMood((prev) => {
+        let next = MOODS[Math.floor(Math.random() * MOODS.length)];
+        while (MOODS.length > 1 && prev && next.id === prev.id) {
+          next = MOODS[Math.floor(Math.random() * MOODS.length)];
+        }
+        return next;
+      });
+      setCount((c) => c + 1);
+      setDrawing(false);
+    }, 420);
+  };
+
+  const accent = mood ? mood.color : "#c9c2d9";
+
+  return (
+    <div
+      style={{
+        fontFamily: "'Zen Maru Gothic', 'Hiragino Maru Gothic ProN', sans-serif",
+        minHeight: "560px",
+        width: "100%",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background:
+          "radial-gradient(circle at 20% 20%, #322a41 0%, #241f2e 55%, #1c1824 100%)",
+        padding: "32px 16px",
+        boxSizing: "border-box",
+      }}
+    >
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&display=swap');
+        @keyframes catbounce {
+          0% { transform: translateY(0) rotate(0deg); }
+          30% { transform: translateY(-10px) rotate(-3deg); }
+          55% { transform: translateY(2px) rotate(2deg); }
+          100% { transform: translateY(0) rotate(0deg); }
+        }
+        @keyframes slipdrop {
+          from { transform: translateY(-14px); opacity: 0; }
+          to { transform: translateY(0); opacity: 1; }
+        }
+        .cat-bounce { animation: catbounce 0.42s ease; }
+        .slip-in { animation: slipdrop 0.35s cubic-bezier(.2,.9,.3,1.2); }
+        @media (prefers-reduced-motion: reduce) {
+          .cat-bounce, .slip-in { animation: none !important; }
+        }
+        .paw-btn:active { transform: scale(0.94); }
+      `}</style>
+
+      <div
+        style={{
+          width: "100%",
+          maxWidth: "360px",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: "18px",
+        }}
+      >
+        <div style={{ textAlign: "center" }}>
+          <div
+            style={{
+              fontSize: "13px",
+              letterSpacing: "0.3em",
+              color: "#c9c2d9",
+              marginBottom: "4px",
+            }}
+          >
+            NEKO MIKUJI
+          </div>
+          <h1
+            style={{
+              fontSize: "24px",
+              fontWeight: 900,
+              color: "#f4ede2",
+              margin: 0,
+            }}
+          >
+            猫の気まぐれおみくじ
+          </h1>
+        </div>
+
+        <div
+          className={drawing ? "cat-bounce" : ""}
+          style={{
+            background: "#fffaf2",
+            borderRadius: "24px",
+            padding: "18px 10px 8px",
+            boxShadow: `0 0 0 3px ${accent}55, 0 18px 40px -12px rgba(0,0,0,0.55)`,
+            transition: "box-shadow 0.5s ease",
+          }}
+        >
+          <CatFace mood={drawing ? null : mood} />
+        </div>
+
+        <div
+          style={{
+            minHeight: "96px",
+            width: "100%",
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
+          {mood && !drawing && (
+            <div
+              key={mood.id}
+              className="slip-in"
+              style={{
+                background: "#fffaf2",
+                borderRadius: "14px",
+                padding: "14px 20px",
+                width: "100%",
+                boxSizing: "border-box",
+                textAlign: "center",
+                borderTop: `5px solid ${accent}`,
+                boxShadow: "0 10px 24px -10px rgba(0,0,0,0.5)",
+              }}
+            >
+              <div
+                style={{
+                  fontSize: "20px",
+                  fontWeight: 900,
+                  color: "#2b2438",
+                  marginBottom: "4px",
+                }}
+              >
+                {mood.label}
+              </div>
+              <div style={{ fontSize: "13px", color: accent, marginBottom: "8px" }}>
+                {"★".repeat(mood.rarity)}
+                {"☆".repeat(3 - mood.rarity)}
+              </div>
+              <div style={{ fontSize: "14px", color: "#4a4358", lineHeight: 1.6 }}>
+                {mood.quip}
+              </div>
+            </div>
+          )}
+        </div>
+
+        <button
+          className="paw-btn"
+          onClick={draw}
+          disabled={drawing}
+          style={{
+            border: "none",
+            borderRadius: "999px",
+            padding: "14px 32px",
+            fontSize: "16px",
+            fontWeight: 700,
+            fontFamily: "inherit",
+            color: "#241f2e",
+            background: drawing ? "#e4dfef" : "#f4ede2",
+            cursor: drawing ? "default" : "pointer",
+            boxShadow: "0 8px 18px -6px rgba(0,0,0,0.5)",
+            transition: "transform 0.1s ease, background 0.2s ease",
+          }}
+        >
+          {drawing ? "ふむふむ…" : mood ? "🐾 もう一度引く" : "🐾 気まぐれを引く"}
+        </button>
+
+        {count > 0 && (
+          <div style={{ fontSize: "12px", color: "#8b8399" }}>
+            本日 {count} 回引きました
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
